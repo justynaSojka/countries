@@ -16,21 +16,14 @@
 </head>
 
 <body>
-    <div id="darkMap">
+    <div class="topNav" id="darkMap">
         <div class="text-center">
-            <p class="mb-5" id="darkMapBigText">All The Country Info At Your Hand!</p>
-            <p class="darkMapSmallText">Choose country from the list and get all the information you need!</p>
-            <p class="darkMapSmallText mb-4">Features: weather for next 7 days,<br> the country's main currency exchange rate, Covid-19 cases<br>
-                and more!</p>
-
-            <div id="selectAndButton">   
-	            <select id="countrySelect" class="mt-2">
+            <div id="select">   
+	            <select id="countrySelect" class="mt-2" onchange="loadCountry()">
 	                <option value="" disabled selected="">Please select a country</option>
 	            </select>
-	            <button id="countrySelectButton" onclick="loadCountry()">Let's Go!</button>
             </div>
         </div>
-        <span><i id="arrowDown" class="fa fa-chevron-down" onclick="slideDown()"></i></span>
     </div>
 
     <div id="map"></div>
@@ -58,6 +51,20 @@
                 <legend>Bordering countries</legend>
                 <span></span>
             </fieldset>
+        </fieldset>
+
+        <fieldset id='emergencySection' class="section">
+        	<legend class="title"><span><i class="titleIcons fa fa-ambulance"> </i></span> Emergency Numbers</legend>
+        	<div class="emergencyNumbersWrapper">
+	            <p id='ambulanceWrapper'>Ambulance: <span id='ambulance'></span> <i class=" phoneIcon fa fa-phone-alt"> </i></p>
+	            <p id='fireWrapper'>Fire Department: <span id='fire'></span> <i class="phoneIcon fa fa-phone-alt"> </i></p>
+	            <p id='policeWrapper'>Police: <span id='police'></span> <i class="phoneIcon fa fa-phone-alt"> </i></p>
+            </div>
+        </fieldset>
+
+         <fieldset  id="holidaysSection" class="section">
+        	<legend class="title"><span><i class="titleIcons fa fa-calendar-alt"> </i></span> Public Holidays</legend>
+            <div class="holidayDateWrapper"></div>
         </fieldset>
         
         <fieldset  class="section">
@@ -91,14 +98,15 @@
         	</div>
             <div id="weatherDaySeparator" class="clearfix"></div>
             <div class="weather-grid-container">
-            	
+             	
             </div>
         </fieldset>
 
         <fieldset  id="wikiSection" class="section">
             <legend class="title"><span><i class="titleIcons fab fa-wikipedia-w" style="font-size:27px;"> </i></span> Wikipedia</legend>
-            <div id="link">
-                
+            <div id="link"></div>
+            <div class="line-clamp" id="wikiPara">
+            	<p></p>
             </div>
         </fieldset>
 

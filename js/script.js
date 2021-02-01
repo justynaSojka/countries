@@ -1,22 +1,22 @@
 var countries = [];
 var exchange = {};
 var isMapShown = false;
-var isNavShown = false;
+var isNavShown = true;
 
 var preload = new Image();
 preload.src = 'img/lighter-dark-map.jpg';
 
-function loadCountry(selectedCountryName) {
-    if (typeof selectedCountryName == 'undefined') {
-        selectedCountryName = $('#countrySelect').val();
+function loadCountry(selectedCountryCode) {
+    if (typeof selectedCountryCode == 'undefined') {
+        selectedCountryCode = $('#countrySelect').val();
     }
     var selectedCountryData = countries.find(function(country) {
-        return country.name == selectedCountryName;
+        return country.alpha2Code == selectedCountryCode;
     });
     var pounds = getExchangeRate(selectedCountryData.currencies[0].code, "GBP");
     var dollar = getExchangeRate(selectedCountryData.currencies[0].code, "USD");;
     var euro = getExchangeRate(selectedCountryData.currencies[0].code, "EUR");
-    $('#countryName').html(selectedCountryName);
+    $('#countryName').html(selectedCountryData.name);
     $('#flag').attr('src', selectedCountryData.flag);
     $('#continent').html(selectedCountryData.region);
     $('#capital').html(selectedCountryData.capital);
@@ -30,10 +30,13 @@ function loadCountry(selectedCountryName) {
     $('#exchangeRate-gbp').html(pounds + ' ' + selectedCountryData.currencies[0].code + ' = 1 GBP');
     $('#exchangeRate-usd').html(dollar + ' ' + selectedCountryData.currencies[0].code + ' = 1 USD');
     $('#exchangeRate-eur').html(euro + ' ' + selectedCountryData.currencies[0].code + ' = 1 EUR');
+    getEmergencyNumbers(selectedCountryData.alpha2Code);
+    getPublicHolidays(selectedCountryData.alpha2Code);
     covid19(selectedCountryData.alpha2Code);
     $('#map').css('display', 'block');
     $('#infoModal')[0].scrollTop = 0;
-    $('#link').html('<a href="https://en.wikipedia.org/wiki/' + selectedCountryName + '" target="_blank"> https://en.wikipedia.org/wiki/' + selectedCountryName + '</a>');
+    $('#link').html('<a href="https://en.wikipedia.org/wiki/' + selectedCountryData.name + '" target="_blank"> <i class="linkIcon fa fa-external-link-alt"></i>https://en.wikipedia.org/wiki/' + selectedCountryData.name + '</a>');
+    getWikiParagraph(selectedCountryData.name);
     if (isMapShown == false) {
         initializeMap();
     }
@@ -71,7 +74,7 @@ function drawBorderingCountries(countryCodes) {
         var countryData = countries.find(function(country) {
             return country.alpha3Code == countryCode;
         });
-        container.append("<p onclick='loadCountry(`" + countryData.name + "`)'><img src='" + countryData.flag + "'> " + countryData.name + "</p>")
+        container.append("<p onclick='loadCountry(`" + countryData.alpha2Code + "`)'><img src='" + countryData.flag + "'> " + countryData.name + "</p>")
     }
 
     if (countryCodes.length == 0) {
@@ -106,10 +109,73 @@ function nextDaysForecast(lat, lon) {
         });
 }
 
+function getWikiParagraph(countryName) {
+     fetch('engine.php?question=wiki&countryName=' + countryName)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            for(number in data.query.pages) {
+               $('#wikiPara p').html(data.query.pages[number].extract);
+               break;
+            }
+        });
+}
+
+function getPublicHolidays(code) {
+   fetch('engine.php?question=holidays&code=' + code)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            if ("title" in data) {
+                $("#holidaysSection").hide();
+            } else {
+                $("#holidaysSection").show();
+                $("#holidaysSection .dateWrapper").html("");
+                for (var holiday of data) {
+                  $("#holidaysSection .holidayDateWrapper").append("<p>" + holiday.date + ": <span>" + holiday.name + "</span></p>");
+                }
+            }
+        }); 
+}
+
+function getEmergencyNumbers(code) {
+   fetch('engine.php?question=emergency-numbers&code=' + code)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+
+            if(data.data.ambulance.all[0] == '' && data.data.fire.all[0] == '' && data.data.police.all[0] == ''){
+                $('#emergencySection').hide();
+            }else{
+                $('#emergencySection').show();
+            }
+
+            if(data.data.ambulance.all[0] != ""){
+                $('#ambulanceWrapper').show();
+                $('#ambulance').html(data.data.ambulance.all[0]);    
+            }else{
+                $('#ambulanceWrapper').hide();
+            }
+            if(data.data.fire.all[0] != ""){
+                $('#fireWrapper').show();
+                $('#fire').html(data.data.fire.all[0]);
+            }else{
+                $('#fireWrapper').hide();
+            }
+
+            if(data.data.police.all[0] != ""){
+                $('#policeWrapper').show();
+                $('#police').html(data.data.police.all[0]);           
+            }else{
+                $('#policeWrapper').hide();
+            }
+
+        }); 
+}
+
 
 function covid19(code) {
     var date = new Date().toISOString().split('T')[0];
-    console.log(date);
     fetch('engine.php?question=covid-19&code=' + code)
         .then(response => response.json())
         .then(data => {
@@ -156,13 +222,6 @@ function getExchangeRate(base, target) {
     return (usdValue / parseFloat(exchange.rates[target])).toFixed(2);
 }
 
-function slideDown() {
-    $('#darkMap').removeClass('topNav');
-    $('#map').css('display', 'none');
-    $('#infoModal').hide();
-    isNavShown = false;
-
-}
 
 function initializeMap() {
     mymap = L.map('map').setView([51.505, -0.09], 13);
@@ -185,32 +244,41 @@ function closeModal() {
 var mymap;
 
 $(document).ready(function() {
+    navigator.geolocation.getCurrentPosition(function(position) {
+        console.log(position);
+    });
     fetch('engine.php?question=countries')
         .then(response => response.json())
         .then(data => {
-            console.log(data);
+            countries = data;
+        });
 
+    fetch('engine.php?question=exchange')
+        .then(response => response.json())
+        .then(data => {
+            exchange = data;
+        });
+
+    fetch('countryBorders.geo.json')
+        .then(response => response.json())
+        .then(data => {
+            var countryList = data.features;
+            console.log(data);
             function compare(a, b) {
-                if (a.name < b.name) {
+                if (a.properties.name < b.properties.name) {
                     return -1;
                 }
-                if (a.name > b.name) {
+                if (a.properties.name > b.properties.name) {
                     return 1;
                 }
                 return 0;
             }
 
-            countries = data.sort(compare);
-            for (var i = 0; i < countries.length; i++) {
-                if (countries[i].name != 'Antarctica') {
-                    $('#countrySelect').append('<option>' + countries[i].name + '</option>');
+            countryList = countryList.sort(compare);
+            for (var i = 0; i < countryList.length; i++) {
+                if (countryList[i].properties.name != 'Antarctica') {
+                    $('#countrySelect').append('<option value="' + countryList[i].properties.iso_a2 + '">' + countryList[i].properties.name + '</option>');
                 }
             }
-        });
-    fetch('engine.php?question=exchange')
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-            exchange = data;
         });
 });
