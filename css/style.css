@@ -3,6 +3,183 @@ body {
 
 }
 
+#floatingCirclesG{
+    position:relative;
+    top: 40vh;
+    width:125px;
+    height:125px;
+    margin:auto;
+    transform:scale(0.6);
+        -o-transform:scale(0.6);
+        -ms-transform:scale(0.6);
+        -webkit-transform:scale(0.6);
+        -moz-transform:scale(0.6);
+}
+
+.f_circleG{
+    position:absolute;
+    background-color:rgb(255,255,255);
+    height:22px;
+    width:22px;
+    border-radius:12px;
+        -o-border-radius:12px;
+        -ms-border-radius:12px;
+        -webkit-border-radius:12px;
+        -moz-border-radius:12px;
+    animation-name:f_fadeG;
+        -o-animation-name:f_fadeG;
+        -ms-animation-name:f_fadeG;
+        -webkit-animation-name:f_fadeG;
+        -moz-animation-name:f_fadeG;
+    animation-duration:1.2s;
+        -o-animation-duration:1.2s;
+        -ms-animation-duration:1.2s;
+        -webkit-animation-duration:1.2s;
+        -moz-animation-duration:1.2s;
+    animation-iteration-count:infinite;
+        -o-animation-iteration-count:infinite;
+        -ms-animation-iteration-count:infinite;
+        -webkit-animation-iteration-count:infinite;
+        -moz-animation-iteration-count:infinite;
+    animation-direction:normal;
+        -o-animation-direction:normal;
+        -ms-animation-direction:normal;
+        -webkit-animation-direction:normal;
+        -moz-animation-direction:normal;
+}
+
+#frotateG_01{
+    left:0;
+    top:51px;
+    animation-delay:0.45s;
+        -o-animation-delay:0.45s;
+        -ms-animation-delay:0.45s;
+        -webkit-animation-delay:0.45s;
+        -moz-animation-delay:0.45s;
+}
+
+#frotateG_02{
+    left:15px;
+    top:15px;
+    animation-delay:0.6s;
+        -o-animation-delay:0.6s;
+        -ms-animation-delay:0.6s;
+        -webkit-animation-delay:0.6s;
+        -moz-animation-delay:0.6s;
+}
+
+#frotateG_03{
+    left:51px;
+    top:0;
+    animation-delay:0.75s;
+        -o-animation-delay:0.75s;
+        -ms-animation-delay:0.75s;
+        -webkit-animation-delay:0.75s;
+        -moz-animation-delay:0.75s;
+}
+
+#frotateG_04{
+    right:15px;
+    top:15px;
+    animation-delay:0.9s;
+        -o-animation-delay:0.9s;
+        -ms-animation-delay:0.9s;
+        -webkit-animation-delay:0.9s;
+        -moz-animation-delay:0.9s;
+}
+
+#frotateG_05{
+    right:0;
+    top:51px;
+    animation-delay:1.05s;
+        -o-animation-delay:1.05s;
+        -ms-animation-delay:1.05s;
+        -webkit-animation-delay:1.05s;
+        -moz-animation-delay:1.05s;
+}
+
+#frotateG_06{
+    right:15px;
+    bottom:15px;
+    animation-delay:1.2s;
+        -o-animation-delay:1.2s;
+        -ms-animation-delay:1.2s;
+        -webkit-animation-delay:1.2s;
+        -moz-animation-delay:1.2s;
+}
+
+#frotateG_07{
+    left:51px;
+    bottom:0;
+    animation-delay:1.35s;
+        -o-animation-delay:1.35s;
+        -ms-animation-delay:1.35s;
+        -webkit-animation-delay:1.35s;
+        -moz-animation-delay:1.35s;
+}
+
+#frotateG_08{
+    left:15px;
+    bottom:15px;
+    animation-delay:1.5s;
+        -o-animation-delay:1.5s;
+        -ms-animation-delay:1.5s;
+        -webkit-animation-delay:1.5s;
+        -moz-animation-delay:1.5s;
+}
+
+
+
+@keyframes f_fadeG{
+    0%{
+        background-color:rgb(0,0,0);
+    }
+
+    100%{
+        background-color:rgb(255,255,255);
+    }
+}
+
+@-o-keyframes f_fadeG{
+    0%{
+        background-color:rgb(0,0,0);
+    }
+
+    100%{
+        background-color:rgb(255,255,255);
+    }
+}
+
+@-ms-keyframes f_fadeG{
+    0%{
+        background-color:rgb(0,0,0);
+    }
+
+    100%{
+        background-color:rgb(255,255,255);
+    }
+}
+
+@-webkit-keyframes f_fadeG{
+    0%{
+        background-color:rgb(0,0,0);
+    }
+
+    100%{
+        background-color:rgb(255,255,255);
+    }
+}
+
+@-moz-keyframes f_fadeG{
+    0%{
+        background-color:rgb(0,0,0);
+    }
+
+    100%{
+        background-color:rgb(255,255,255);
+    }
+}
+
 .prefetch {
     width: 1px !important;
     height: 1px !important;
@@ -116,6 +293,7 @@ body {
     border-radius: 15px;
     text-align: center;
     scroll-behavior: smooth;
+    min-width: 800px;
 }
 
 #arrowUp {
@@ -197,7 +375,25 @@ body {
     }
 }
 
+#reopenModal {
+	display: none;
+	position: absolute;
+	top: 100px;
+	color: white;
+	background-image: url("../img/dark-map.jpg");
+	height: 40px;
+    line-height: 40px;
+    padding-left: 18px;
+    padding-right: 14px;
+    border-radius: 0px 18px 18px 0px;
+    font-size: 18px;
+    z-index: 1000;
+    cursor: pointer;
+}
 
+#reopenModal:hover {
+	color: rgb(117, 207, 240);
+}
 
 #closeIcon {
     padding-top: 5px;
@@ -314,6 +510,7 @@ body {
     font-size: 16px;
     position: relative;
     bottom: 2px;
+    margin-left: 10px;
 }
 
 .emergencyNumbersWrapper {
@@ -405,6 +602,16 @@ body {
   -webkit-box-orient: vertical; 
 }
 
+
+@media screen and (orientation:portrait) and (max-width: 1024px) {
+
+    #infoModal {
+        left: calc(50% - 400px);
+    }
+}
+
+
+
 @media screen and (orientation:landscape) and (max-width: 850px) {
 
     #countrySelect {
@@ -412,6 +619,10 @@ body {
         width: 450px !important;
         height: 40px;
         padding: 4px 8px 4px 8px;
+    }
+
+    #floatingCirclesG{
+    	top: 25vh;
     }
 
     .topNav {
@@ -433,7 +644,16 @@ body {
         right: 5px;
         left: unset;
         top: 70px;
+        min-width: unset;
     }
+
+    #reopenModal {
+    	right: 0px;
+		top: 80%;
+	    padding-left: 14px;
+	    padding-right: 18px;
+	    border-radius: 18px 0px 0px 18px;
+	}
 
     #closeIcon {
         margin-top: 3px;
@@ -530,6 +750,10 @@ body {
         height: 44px;
     }
 
+    #floatingCirclesG{
+    	top: 30vh;
+    }
+
     .topNav {
         height: 56px !important;
     }
@@ -555,8 +779,18 @@ body {
         top:unset;
         bottom: 1vh;
         height: 49%;
-        left: 2.5%;
+        left: 2.5% !important;
+        min-width: unset;
     }
+
+    #reopenModal {
+    	right: 0px;
+		top: 80%;
+	    padding-left: 14px;
+	    padding-right: 18px;
+	    border-radius: 18px 0px 0px 18px;
+	}
+
 
     #closeIcon {
         margin-top: 3px;
@@ -639,18 +873,33 @@ body {
     }
 }
 
-@media screen and (orientation:portrait) and (max-width: 320px) {
-    #countrySelect {
-        width: 94% !important;
+
+
+@media screen and (orientation:portrait) and (max-width: 361px) {
+    
+    .topNav {
+        height: 40px !important;
     }
+
     .topNav #countrySelect {
         width: 74% !important;
+        height: 30px;
+        margin-top: 5px !important;
+        font-size: 18px;
     }
+
     #bordering-countries legend {
         font-size: 19px;
         padding: 0 6px 0 6px;
     }
+
     .title {
     	font-size: 18px;
     }
+
+    #infoModal {
+        height: 47%;
+        left: 5px;
+    }
 }
+

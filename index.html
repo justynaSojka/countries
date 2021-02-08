@@ -15,16 +15,30 @@
     <link rel="stylesheet" href="css/fontawesome/css/all.min.css">
 </head>
 
+
 <body>
+
     <div class="topNav" id="darkMap">
         <div class="text-center">
             <div id="select">   
 	            <select id="countrySelect" class="mt-2" onchange="loadCountry()">
 	                <option value="" disabled selected="">Please select a country</option>
 	            </select>
+	            <div id="floatingCirclesG">
+					<div class="f_circleG" id="frotateG_01"></div>
+					<div class="f_circleG" id="frotateG_02"></div>
+					<div class="f_circleG" id="frotateG_03"></div>
+					<div class="f_circleG" id="frotateG_04"></div>
+					<div class="f_circleG" id="frotateG_05"></div>
+					<div class="f_circleG" id="frotateG_06"></div>
+					<div class="f_circleG" id="frotateG_07"></div>
+					<div class="f_circleG" id="frotateG_08"></div>
+				</div>
             </div>
         </div>
     </div>
+
+    <div id="reopenModal" onclick="reopenModal()">Reopen Country Details</div>
 
     <div id="map"></div>
 
@@ -56,9 +70,9 @@
         <fieldset id='emergencySection' class="section">
         	<legend class="title"><span><i class="titleIcons fa fa-ambulance"> </i></span> Emergency Numbers</legend>
         	<div class="emergencyNumbersWrapper">
-	            <p id='ambulanceWrapper'>Ambulance: <span id='ambulance'></span> <i class=" phoneIcon fa fa-phone-alt"> </i></p>
-	            <p id='fireWrapper'>Fire Department: <span id='fire'></span> <i class="phoneIcon fa fa-phone-alt"> </i></p>
-	            <p id='policeWrapper'>Police: <span id='police'></span> <i class="phoneIcon fa fa-phone-alt"> </i></p>
+	            <p id='ambulanceWrapper'>Ambulance: <i class="phoneIcon fa fa-phone-alt"> </i><span id='ambulance'> </span></p>
+	            <p id='fireWrapper'>Fire Department: <i class="phoneIcon fa fa-phone-alt"> </i><span id='fire'></span> </p>
+	            <p id='policeWrapper'>Police: <i class="phoneIcon fa fa-phone-alt"> </i><span id='police'></span> </p>
             </div>
         </fieldset>
 

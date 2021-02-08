@@ -22,7 +22,7 @@ function loadCountry(selectedCountryCode) {
     $('#capital').html(selectedCountryData.capital);
     $('#weatherCity').html(selectedCountryData.capital);
     $('#language').html(selectedCountryData.languages.map(language => language.name).join(', '));
-    $('#population').html(selectedCountryData.population);
+    $('#population').html(new Intl.NumberFormat().format(selectedCountryData.population));
     $('#timezone').html(selectedCountryData.timezones.join(', '));
     $('#currencyName').html(selectedCountryData.currencies[0].name);
     $('#currencyCode').html(selectedCountryData.currencies[0].code);
@@ -40,7 +40,7 @@ function loadCountry(selectedCountryCode) {
     if (isMapShown == false) {
         initializeMap();
     }
-
+    addMarker(selectedCountryData.latlng[0], selectedCountryData.latlng[1])
     drawBorderingCountries(selectedCountryData.borders);
 
     if (isNavShown == false) {
@@ -82,20 +82,34 @@ function drawBorderingCountries(countryCodes) {
     }
 }
 
+var border;
+
 function showCountry(selectedCountryData) {
 
-    if (window.matchMedia("(orientation:portrait) and (max-width: 850px)").matches) {
-        var adjustedLatlng = [selectedCountryData.latlng[0] - 5, selectedCountryData.latlng[1]];
-        var zoomLevel = 5;
-    } else if (window.matchMedia("(orientation:landscape) and (max-width: 850px)").matches) {
-        var adjustedLatlng = [selectedCountryData.latlng[0], selectedCountryData.latlng[1] + 7];
-        var zoomLevel = 5;
+    var padding;
+
+    if (window.matchMedia("(orientation:portrait) and (max-width: 361px)").matches) {
+        padding = [10,-280];
+    } else if (window.matchMedia("(orientation:portrait) and (max-width: 850px)").matches){
+	 	padding = [10,-380];
+	} else if (window.matchMedia("(orientation:landscape) and (max-width: 850px)").matches) {
+        padding = [-300,80];
+    } else if (window.matchMedia("(orientation:portrait) and (max-width: 1024px)").matches){
+    	padding = null;
     } else {
-        var adjustedLatlng = [selectedCountryData.latlng[0], selectedCountryData.latlng[1] - 5.5];
-        var zoomLevel = 6.5;
+        padding = [700,100];
     }
 
-    mymap.flyTo(adjustedLatlng, zoomLevel);
+    
+    var feature = countryList.find(function(country){
+        return country.properties.iso_a2 == selectedCountryData.alpha2Code;
+    });
+    if(border) {
+        mymap.removeLayer(border);
+    } 
+    border = L.GeoJSON.geometryToLayer(feature).addTo(mymap);
+    mymap.flyToBounds(border.getBounds(),{paddingTopLeft: padding});
+    $('#reopenModal').fadeOut();
 }
 
 function nextDaysForecast(lat, lon) {
@@ -108,6 +122,7 @@ function nextDaysForecast(lat, lon) {
             }
         });
 }
+
 
 function getWikiParagraph(countryName) {
      fetch('engine.php?question=wiki&countryName=' + countryName)
@@ -125,12 +140,12 @@ function getPublicHolidays(code) {
    fetch('engine.php?question=holidays&code=' + code)
         .then(response => response.json())
         .then(data => {
-            console.log(data);
+            console.log('dupa', data);
             if ("title" in data) {
                 $("#holidaysSection").hide();
             } else {
                 $("#holidaysSection").show();
-                $("#holidaysSection .dateWrapper").html("");
+                $("#holidaysSection .holidayDateWrapper").html("");
                 for (var holiday of data) {
                   $("#holidaysSection .holidayDateWrapper").append("<p>" + holiday.date + ": <span>" + holiday.name + "</span></p>");
                 }
@@ -152,20 +167,20 @@ function getEmergencyNumbers(code) {
 
             if(data.data.ambulance.all[0] != ""){
                 $('#ambulanceWrapper').show();
-                $('#ambulance').html(data.data.ambulance.all[0]);    
+                $('#ambulance').html(" " + data.data.ambulance.all[0]);    
             }else{
                 $('#ambulanceWrapper').hide();
             }
             if(data.data.fire.all[0] != ""){
                 $('#fireWrapper').show();
-                $('#fire').html(data.data.fire.all[0]);
+                $('#fire').html(" " + data.data.fire.all[0]);
             }else{
                 $('#fireWrapper').hide();
             }
 
             if(data.data.police.all[0] != ""){
                 $('#policeWrapper').show();
-                $('#police').html(data.data.police.all[0]);           
+                $('#police').html(" " + data.data.police.all[0]);           
             }else{
                 $('#policeWrapper').hide();
             }
@@ -223,6 +238,12 @@ function getExchangeRate(base, target) {
 }
 
 
+function reopenModal() {
+    showModal();
+    $('#reopenModal').fadeOut();
+}
+
+
 function initializeMap() {
     mymap = L.map('map').setView([51.505, -0.09], 13);
     L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoianVzdHluYTE5OTQiLCJhIjoiY2tpMzY5dm1zMWtvYTJzb2FxbWt0ZTdwZCJ9.jGWdelY_X2BFrlxKp2UeMQ', {
@@ -234,35 +255,34 @@ function initializeMap() {
         accessToken: 'pk.eyJ1IjoianVzdHluYTE5OTQiLCJhIjoiY2tpMzY5dm1zMWtvYTJzb2FxbWt0ZTdwZCJ9.jGWdelY_X2BFrlxKp2UeMQ'
     }).addTo(mymap);
     isMapShown = true;
+
 }
+
+ var marker;
+
+function addMarker(lon,lng){
+    if(marker) {
+        mymap.removeLayer(marker);
+    } 
+    marker = L.marker([lon, lng]).addTo(mymap);
+}
+    
+  
 
 function closeModal() {
     $('#infoModal').addClass('flip-out-hor-top');
     $('#infoModal').removeClass('flip-in-hor-bottom');
+    $('#reopenModal').fadeIn(1000);
 }
 
 var mymap;
+var countryList;
 
-$(document).ready(function() {
-    navigator.geolocation.getCurrentPosition(function(position) {
-        console.log(position);
-    });
-    fetch('engine.php?question=countries')
-        .then(response => response.json())
-        .then(data => {
-            countries = data;
-        });
-
-    fetch('engine.php?question=exchange')
-        .then(response => response.json())
-        .then(data => {
-            exchange = data;
-        });
-
+function loadGeoJson() {
     fetch('countryBorders.geo.json')
         .then(response => response.json())
         .then(data => {
-            var countryList = data.features;
+            countryList = data.features;
             console.log(data);
             function compare(a, b) {
                 if (a.properties.name < b.properties.name) {
@@ -276,9 +296,36 @@ $(document).ready(function() {
 
             countryList = countryList.sort(compare);
             for (var i = 0; i < countryList.length; i++) {
-                if (countryList[i].properties.name != 'Antarctica') {
+                var doesCountryExist = countries.find(function(country){
+                    return country.alpha2Code == countryList[i].properties.iso_a2;
+                });
+                if (countryList[i].properties.name != 'Antarctica' && doesCountryExist) {
                     $('#countrySelect').append('<option value="' + countryList[i].properties.iso_a2 + '">' + countryList[i].properties.name + '</option>');
                 }
             }
         });
+}
+
+$(document).ready(function() {
+    navigator.geolocation.getCurrentPosition(function(position) {
+        console.log(position);
+    });
+    fetch('engine.php?question=countries')
+        .then(response => response.json())
+        .then(data => {
+            countries = data;
+            $('#floatingCirclesG').show();
+            loadGeoJson();
+            setTimeout(() => { 
+                $('#floatingCirclesG').hide();
+            }, 1000);
+        });
+
+    fetch('engine.php?question=exchange')
+        .then(response => response.json())
+        .then(data => {
+            exchange = data;
+        });
+
+    
 });
