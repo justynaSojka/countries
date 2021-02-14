@@ -25,6 +25,7 @@
 	                <option value="" disabled selected="">Please select a country</option>
 	            </select>
 	            <div id="floatingCirclesG">
+                    <span class="loading">Loading</span>
 					<div class="f_circleG" id="frotateG_01"></div>
 					<div class="f_circleG" id="frotateG_02"></div>
 					<div class="f_circleG" id="frotateG_03"></div>
@@ -55,20 +56,20 @@
 
 
         <fieldset class="section">
-        	<legend class="title mt-4"><span><i class="titleIcons fa fa-globe-americas"> </i></span> Country Info</legend>
+        	<legend align="center" class="title mt-4"><span><i class="titleIcons fa fa-globe-americas"> </i></span> Country Info</legend>
             <p>Continent: <span id="continent"></span></p>
             <p>Capital city: <span id="capital"></span></p>
             <p>Language: <span id="language"></span></p>
             <p>Population: <span id="population"></span></p>
             <p>Timezone: <span id="timezone"></span></p>
             <fieldset id='bordering-countries'>
-                <legend>Bordering countries</legend>
+                <legend align="center">Bordering countries</legend>
                 <span></span>
             </fieldset>
         </fieldset>
 
         <fieldset id='emergencySection' class="section">
-        	<legend class="title"><span><i class="titleIcons fa fa-ambulance"> </i></span> Emergency Numbers</legend>
+        	<legend align="center" class="title"><span><i class="titleIcons fa fa-ambulance"> </i></span> Emergency Numbers</legend>
         	<div class="emergencyNumbersWrapper">
 	            <p id='ambulanceWrapper'>Ambulance: <i class="phoneIcon fa fa-phone-alt"> </i><span id='ambulance'> </span></p>
 	            <p id='fireWrapper'>Fire Department: <i class="phoneIcon fa fa-phone-alt"> </i><span id='fire'></span> </p>
@@ -77,12 +78,12 @@
         </fieldset>
 
          <fieldset  id="holidaysSection" class="section">
-        	<legend class="title"><span><i class="titleIcons fa fa-calendar-alt"> </i></span> Public Holidays</legend>
+        	<legend align="center" class="title"><span><i class="titleIcons fa fa-calendar-alt"> </i></span> Public Holidays</legend>
             <div class="holidayDateWrapper"></div>
         </fieldset>
         
         <fieldset  class="section">
-        	<legend class="title"><span><i class="titleIcons fa fa-search-dollar"> </i></span> Currency</legend>
+        	<legend align="center" class="title"><span><i class="titleIcons fa fa-search-dollar"> </i></span> Currency</legend>
             <p>Name: <span id="currencyName"></span></p>
             <p>Code: <span id="currencyCode"></span></p>
             <p>Symbol: <span id="currencySymbol"></span></p>
@@ -100,7 +101,7 @@
         </div>
         
         <fieldset  id="weatherSection" class="section">
-        	<legend class="title"><span><i class="titleIcons fa fa-cloud-sun"> </i></span> Weather</legend>
+        	<legend align="center" class="title"><span><i class="titleIcons fa fa-cloud-sun"> </i></span> Weather</legend>
         	<div id="weatherCity"></div>
         	<div id="todayWeatherCard" class="weatherCard">
 	        	<div id="weatherDay">Today</div>
@@ -117,7 +118,7 @@
         </fieldset>
 
         <fieldset  id="wikiSection" class="section">
-            <legend class="title"><span><i class="titleIcons fab fa-wikipedia-w" style="font-size:27px;"> </i></span> Wikipedia</legend>
+            <legend align="center" class="title"><span><i class="titleIcons fab fa-wikipedia-w" style="font-size:27px;"> </i></span> Wikipedia</legend>
             <div id="link"></div>
             <div class="line-clamp" id="wikiPara">
             	<p></p>
@@ -125,7 +126,7 @@
         </fieldset>
 
         <fieldset  id="covidSection" class="section">
-            <legend id="titleCovid" class="title"><span><i class="titleIcons fa fa-virus"> </i></span> COVID-19 Cases</legend>
+            <legend align="center" id="titleCovid" class="title"><span><i class="titleIcons fa fa-virus"> </i></span> COVID-19 Cases</legend>
             <div>
                 <p>Confirmed: <span id="confirmed"></span></p>
                 <p>Recovered: <span id="recovered"></span></p>

@@ -101,15 +101,25 @@ function showCountry(selectedCountryData) {
     }
 
     
-    var feature = countryList.find(function(country){
-        return country.properties.iso_a2 == selectedCountryData.alpha2Code;
+    var feature = countryBorders.find(function(country){
+        return country.code == selectedCountryData.alpha2Code;
     });
     if(border) {
         mymap.removeLayer(border);
     } 
-    border = L.GeoJSON.geometryToLayer(feature).addTo(mymap);
+    border = L.GeoJSON.geometryToLayer(feature.feature).addTo(mymap);
     mymap.flyToBounds(border.getBounds(),{paddingTopLeft: padding});
     $('#reopenModal').fadeOut();
+}
+
+function LoadUserLocation(lat,lng) {
+     fetch('openCage.php?lat=' + lat + '&lng=' + lng)
+        .then(response => response.json())
+        .then(data => {
+        console.log(data);
+        var code = data.results[0].components["ISO_3166-1_alpha-2"];
+        loadCountry(code);
+        });
 }
 
 function nextDaysForecast(lat, lon) {
@@ -140,7 +150,7 @@ function getPublicHolidays(code) {
    fetch('engine.php?question=holidays&code=' + code)
         .then(response => response.json())
         .then(data => {
-            console.log('dupa', data);
+            
             if ("title" in data) {
                 $("#holidaysSection").hide();
             } else {
@@ -245,7 +255,7 @@ function reopenModal() {
 
 
 function initializeMap() {
-    mymap = L.map('map').setView([51.505, -0.09], 13);
+    mymap = L.map('map').setView([51.505, -0.09], 1);
     L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoianVzdHluYTE5OTQiLCJhIjoiY2tpMzY5dm1zMWtvYTJzb2FxbWt0ZTdwZCJ9.jGWdelY_X2BFrlxKp2UeMQ', {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
         maxZoom: 18,
@@ -266,6 +276,16 @@ function addMarker(lon,lng){
     } 
     marker = L.marker([lon, lng]).addTo(mymap);
 }
+
+function geolocation() {
+    navigator.geolocation.getCurrentPosition(function(position) {
+        console.log(position);
+        LoadUserLocation(position.coords.latitude, position.coords.longitude);
+        $('#floatingCirclesG').hide();
+    }, function() {
+        $('#floatingCirclesG').hide();
+    });
+}
     
   
 
@@ -277,48 +297,41 @@ function closeModal() {
 
 var mymap;
 var countryList;
+var countryBorders;
 
 function loadGeoJson() {
-    fetch('countryBorders.geo.json')
+    fetch('list-of-countries.php')
         .then(response => response.json())
         .then(data => {
-            countryList = data.features;
+            countryList = data.data;
             console.log(data);
-            function compare(a, b) {
-                if (a.properties.name < b.properties.name) {
-                    return -1;
-                }
-                if (a.properties.name > b.properties.name) {
-                    return 1;
-                }
-                return 0;
-            }
-
-            countryList = countryList.sort(compare);
+            
             for (var i = 0; i < countryList.length; i++) {
                 var doesCountryExist = countries.find(function(country){
-                    return country.alpha2Code == countryList[i].properties.iso_a2;
+                    return country.alpha2Code == countryList[i].code;
                 });
-                if (countryList[i].properties.name != 'Antarctica' && doesCountryExist) {
-                    $('#countrySelect').append('<option value="' + countryList[i].properties.iso_a2 + '">' + countryList[i].properties.name + '</option>');
+                if (countryList[i].name != 'Antarctica' && doesCountryExist) {
+                    $('#countrySelect').append('<option value="' + countryList[i].code + '">' + countryList[i].name + '</option>');
                 }
             }
+            setTimeout(geolocation, 2000);
+        });
+    fetch('country-borders.php')
+        .then(response => response.json())
+        .then(data => {
+            countryBorders = data.data;
+            console.log(data);
         });
 }
 
 $(document).ready(function() {
-    navigator.geolocation.getCurrentPosition(function(position) {
-        console.log(position);
-    });
+    
     fetch('engine.php?question=countries')
         .then(response => response.json())
         .then(data => {
             countries = data;
             $('#floatingCirclesG').show();
             loadGeoJson();
-            setTimeout(() => { 
-                $('#floatingCirclesG').hide();
-            }, 1000);
         });
 
     fetch('engine.php?question=exchange')

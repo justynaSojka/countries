@@ -1,9 +1,19 @@
 body {
     font-family: 'Nunito', sans-serif;
+    background-image: url("../img/dark-map.jpg");
 
 }
 
+.loading {
+	position: relative;
+    top: -94px;
+    color: white;
+    font-size: 60px;
+    left: -44px;
+}
+
 #floatingCirclesG{
+	text-align: center;
     position:relative;
     top: 40vh;
     width:125px;
@@ -486,6 +496,7 @@ body {
     -moz-text-fill-color: transparent;
 }
 
+
 .section {
     font-size: 22px;
     border: 1px inset white;
@@ -525,7 +536,7 @@ body {
 .weatherCard {
     display: inline-block;
     height: 275px;
-    width: 120px;
+    width: 119px;
     float: left;
     padding: 8px;
     border: 1px solid white;
@@ -751,7 +762,7 @@ body {
     }
 
     #floatingCirclesG{
-    	top: 30vh;
+    	top: 36vh;
     }
 
     .topNav {
