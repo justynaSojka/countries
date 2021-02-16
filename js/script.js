@@ -48,16 +48,15 @@ function loadCountry(selectedCountryCode) {
     } else {
         showModal();
     }
-
     hideMainPage();
-    showCountry(selectedCountryData);
+    countryBorders(selectedCountryData.alpha2Code);
 
     fetch('engine.php?question=weather&city=' + selectedCountryData.capital)
         .then(response => response.json())
         .then(data => {
             var iconcode = data.weather[0].icon;
             nextDaysForecast(data.coord.lat, data.coord.lon);
-            var iconurl = "http://openweathermap.org/img/w/" + iconcode + ".png";
+            var iconurl = "https://openweathermap.org/img/w/" + iconcode + ".png";
             $('#weatherImage').attr('src', iconurl);
             var description = data.weather[0].description;
             $('#weatherDescription').html(description);
@@ -84,7 +83,7 @@ function drawBorderingCountries(countryCodes) {
 
 var border;
 
-function showCountry(selectedCountryData) {
+function showCountry() {
 
     var padding;
 
@@ -100,14 +99,6 @@ function showCountry(selectedCountryData) {
         padding = [700,100];
     }
 
-    
-    var feature = countryBorders.find(function(country){
-        return country.code == selectedCountryData.alpha2Code;
-    });
-    if(border) {
-        mymap.removeLayer(border);
-    } 
-    border = L.GeoJSON.geometryToLayer(feature.feature).addTo(mymap);
     mymap.flyToBounds(border.getBounds(),{paddingTopLeft: padding});
     $('#reopenModal').fadeOut();
 }
@@ -116,7 +107,6 @@ function LoadUserLocation(lat,lng) {
      fetch('openCage.php?lat=' + lat + '&lng=' + lng)
         .then(response => response.json())
         .then(data => {
-        console.log(data);
         var code = data.results[0].components["ISO_3166-1_alpha-2"];
         loadCountry(code);
         });
@@ -138,11 +128,12 @@ function getWikiParagraph(countryName) {
      fetch('engine.php?question=wiki&countryName=' + countryName)
         .then(response => response.json())
         .then(data => {
-            console.log(data);
             for(number in data.query.pages) {
                $('#wikiPara p').html(data.query.pages[number].extract);
                break;
             }
+        }).catch(function(){
+
         });
 }
 
@@ -167,7 +158,6 @@ function getEmergencyNumbers(code) {
    fetch('engine.php?question=emergency-numbers&code=' + code)
         .then(response => response.json())
         .then(data => {
-            console.log(data);
 
             if(data.data.ambulance.all[0] == '' && data.data.fire.all[0] == '' && data.data.police.all[0] == ''){
                 $('#emergencySection').hide();
@@ -214,7 +204,7 @@ function addWeatherCard(data) {
     var days = ['Sunday', 'Monday', 'Tuesday', 'Wed', 'Thursday', 'Friday', 'Saturday'];
     var dayOfTheWeek = new Date(data.dt * 1000).getDay();
     dayOfTheWeek = days[dayOfTheWeek];
-    var iconurl = "http://openweathermap.org/img/w/" + data.weather[0].icon + ".png";
+    var iconurl = "https://openweathermap.org/img/w/" + data.weather[0].icon + ".png";
     var card = `
   <div class="weatherCard">
     <div id="weatherDay">` + dayOfTheWeek + `</div>
@@ -279,7 +269,6 @@ function addMarker(lon,lng){
 
 function geolocation() {
     navigator.geolocation.getCurrentPosition(function(position) {
-        console.log(position);
         LoadUserLocation(position.coords.latitude, position.coords.longitude);
         $('#floatingCirclesG').hide();
     }, function() {
@@ -304,7 +293,6 @@ function loadGeoJson() {
         .then(response => response.json())
         .then(data => {
             countryList = data.data;
-            console.log(data);
             
             for (var i = 0; i < countryList.length; i++) {
                 var doesCountryExist = countries.find(function(country){
@@ -316,11 +304,18 @@ function loadGeoJson() {
             }
             setTimeout(geolocation, 2000);
         });
-    fetch('country-borders.php')
+}
+
+function countryBorders(code) {
+	fetch('country-borders.php?country=' + code)
         .then(response => response.json())
         .then(data => {
-            countryBorders = data.data;
-            console.log(data);
+            var feature = data.data[0];
+		    if(border) {
+		        mymap.removeLayer(border);
+		    } 
+		    border = L.GeoJSON.geometryToLayer(feature.feature).addTo(mymap);
+		    showCountry();
         });
 }
 

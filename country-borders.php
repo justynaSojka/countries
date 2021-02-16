@@ -4,17 +4,19 @@
     $countryData = json_decode(file_get_contents("countryBorders.geo.json"), true);
 
     $country = [];
+    $code = $_GET['country'];
 
     foreach ($countryData['features'] as $feature) {
+        if ($code == $feature["properties"]['iso_a2']) {
+            $temp = null;
 
-        $temp = null;
+            $temp['code'] = $feature["properties"]['iso_a2'];
 
-        $temp['code'] = $feature["properties"]['iso_a2'];
-
-        $temp['feature'] = $feature;
+            $temp['feature'] = $feature;
 
 
-        array_push($country, $temp);
+            array_push($country, $temp);
+        }
 
     }
     
