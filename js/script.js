@@ -40,8 +40,8 @@ function loadCountry(selectedCountryCode) {
     if (isMapShown == false) {
         initializeMap();
     }
-    addMarker(selectedCountryData.latlng[0], selectedCountryData.latlng[1])
     drawBorderingCountries(selectedCountryData.borders);
+    getCapitalLatLng(selectedCountryData.capital, selectedCountryData.name);
 
     if (isNavShown == false) {
         setTimeout(showModal, 1000);
@@ -112,6 +112,16 @@ function LoadUserLocation(lat,lng) {
         });
 }
 
+function getCapitalLatLng(capital, country) {
+     fetch('openCage.reverse.php?capital=' + capital + ", " + country)
+        .then(response => response.json())
+        .then(data => {
+        console.log(data);
+        var capitalCoord = data.results[0].geometry;
+        addMarker(capitalCoord.lat, capitalCoord.lng);
+        });
+}
+
 function nextDaysForecast(lat, lon) {
     fetch('engine.php?question=weather_next_days&lat=' + lat + '&lon=' + lon)
         .then(response => response.json())
@@ -122,6 +132,12 @@ function nextDaysForecast(lat, lon) {
             }
         });
 }
+
+var myIcon = L.icon({
+    iconUrl: 'img/marker.png',
+    iconSize: [40, 40], // size of the icon
+    iconAnchor: [19,36], // point of the icon which will correspond to marker's location
+});
 
 
 function getWikiParagraph(countryName) {
@@ -264,7 +280,7 @@ function addMarker(lon,lng){
     if(marker) {
         mymap.removeLayer(marker);
     } 
-    marker = L.marker([lon, lng]).addTo(mymap);
+    marker = L.marker([lon, lng], {icon: myIcon}).addTo(mymap);
 }
 
 function geolocation() {
@@ -306,6 +322,13 @@ function loadGeoJson() {
         });
 }
 
+var myStyle = {
+    "color": "#03821e",
+    "weight": 8,
+    "opacity": 0.65,
+
+};
+
 function countryBorders(code) {
 	fetch('country-borders.php?country=' + code)
         .then(response => response.json())
@@ -314,7 +337,9 @@ function countryBorders(code) {
 		    if(border) {
 		        mymap.removeLayer(border);
 		    } 
-		    border = L.GeoJSON.geometryToLayer(feature.feature).addTo(mymap);
+		    border = L.geoJSON(feature.feature, {
+                style: myStyle
+            }).addTo(mymap);
 		    showCountry();
         });
 }
